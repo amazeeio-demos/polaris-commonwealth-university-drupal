@@ -1,0 +1,6 @@
+name: polaris-commonwealth-university-drupal
+recipe: lagoon
+config:
+  flavor: drupal
+  build:
+    - composer install

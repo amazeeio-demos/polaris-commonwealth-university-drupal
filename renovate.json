@@ -1,0 +1,84 @@
+{
+  "baseBranches": [
+    "main",
+    "versioned"
+  ],
+  "extends": [
+    "config:recommended"
+  ],
+  "automerge": true,
+  "automergeType": "pr",
+  "dependencyDashboard": true,
+  "prHourlyLimit": 0,
+  "constraints": {
+    "php": "~8.3.1"
+  },
+  "packageRules": [
+    {
+      "matchDatasources": [
+        "packagist"
+      ],
+      "matchUpdateTypes": [
+        "patch",
+        "minor"
+      ],
+      "matchBaseBranches": [
+        "main"
+      ],
+      "matchPackageNames": [
+        "drupal/core-dev-pinned",
+        "drupal/core-recommended",
+        "drupal/core-composer-scaffold",
+        "drupal/core-project-message"
+      ],
+      "groupName": "Drupal Core"
+    },
+    {
+      "matchDatasources": [
+        "packagist"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "matchBaseBranches": [
+        "main"
+      ],
+      "matchPackageNames": [
+        "drupal/core-dev-pinned",
+        "drupal/core-recommended",
+        "drupal/core-composer-scaffold",
+        "drupal/core-project-message"
+      ],
+      "enabled": false
+    },
+    {
+      "matchManagers": [
+        "github-actions"
+      ],
+      "matchBaseBranches": [
+        "main"
+      ],
+      "groupName": "GitHub actions"
+    },
+    {
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchBaseBranches": [
+        "versioned"
+      ],
+      "versioning": "semver",
+      "groupName": "uselagoon images"
+    },
+    {
+      "matchManagers": [
+        "github-actions",
+        "composer"
+      ],
+      "matchBaseBranches": [
+        "versioned"
+      ],
+      "enabled": false
+    }
+  ]
+}
