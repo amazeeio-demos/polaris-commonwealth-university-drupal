@@ -54,7 +54,7 @@ delphos-main-drupal:
               annotations:
                 nginx.ingress.kubernetes.io/permanent-redirect: https://www.delphosuni.com?$request_url
 
-demo-drupal-delphyos-physics:
+demo-drupal-delphos-physics:
   environments:
     main:
       cronjobs:
