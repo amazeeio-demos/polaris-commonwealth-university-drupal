@@ -63,7 +63,7 @@ delphos-main-drupal:
           - www.delphosuni.com
           - "delphosuni.com":
               annotations:
-                nginx.ingress.kubernetes.io/permanent-redirect: https://www.delphosuni.com?$request_url
+                nginx.ingress.kubernetes.io/permanent-redirect: https://www.delphosuni.com$redirect_uri
 
 demo-drupal-delphos-physics:
   environments:
