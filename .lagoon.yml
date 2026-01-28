@@ -61,7 +61,7 @@ delphos-main-drupal:
       routes:
         - nginx:
           - www.delphosuni.com
-          - "delphosuni.com":
+          - delphosuni.com
 
 demo-drupal-delphos-physics:
   environments:
