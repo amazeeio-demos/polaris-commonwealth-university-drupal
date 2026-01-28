@@ -38,3 +38,31 @@ environments:
         schedule: "M * * * *"
         command: drush cron
         service: cli
+
+delphos-main-drupal:
+  environments:
+    main:
+      cronjobs:
+        - name: drush hourly cron
+          schedule: "M * * * *"
+          command: drush cron
+          service: cli
+      routes:
+        - nginx:
+          - www.delphosuni.com
+          - "delphosuni.com":
+              annotations:
+                nginx.ingress.kubernetes.io/permanent-redirect: https://www.delphosuni.com?$request_url
+
+demo-drupal-delphyos-physics:
+  environments:
+    main:
+      cronjobs:
+        - name: drush hourly cron
+          schedule: "M * * * *"
+          command: drush cron
+          service: cli
+      routes:
+        - nginx:
+          - physics.delphosuni.com
+
