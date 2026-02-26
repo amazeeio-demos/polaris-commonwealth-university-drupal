@@ -2,45 +2,58 @@ docker-compose-yaml: docker-compose.yml
 
 tasks:
   pre-rollout:
-    # - run:
-    #     name: drush sql-dump
-    #     # Takes a pre-rollout backup of production sites only.
-    #     command: mkdir -p /app/web/sites/default/files/private/ && drush sql-dump --ordered-dump --gzip --result-file=/app/web/sites/default/files/private/pre-deploy-dump.sql.gz || true
-    #     service: cli
-    #     when: LAGOON_ENVIRONMENT_TYPE=="production"
+    - run:
+        name: drush status
+        # A simple example of pre-rollout-task
+        command: drush status || echo "Drush Status did not complete successfully"
+        service: cli
 
   post-rollout:
-    - run:
-       name: IF no Drupal installed and we are not main branch, sync from main branch
-       command: |
-         if tables=$(drush sqlq 'show tables;') && [ -z "$tables" ] && [[ "$LAGOON_GIT_BRANCH" != "main" ]]; then
-             # no drupal installed, sync DB from main branch
-             drush -y sql-sync @lagoon.demo-apmg-drupal10-main @self
-             drush -y rsync @lagoon.demo-apmg-drupal10-main:%files @self:%files
-             drush -y cr
-         fi
-       service: cli
-       shell: bash
-    - run:
+     - run:
+        name: IF no Drupal installed and we ARE on main branch, stage the site
+        command: |
+          if tables=$(drush sqlq 'show tables;') && [ -z "$tables" ] && [[ "$LAGOON_GIT_BRANCH" == "main" ]]; then
+              /app/lagoon/stage-site.sh
+              drush -y cr
+          fi
+        service: cli
+        shell: bash
+     - run:
+        name: IF no Drupal installed and we ARE NOT on main branch, sync from main branch
+        command: |
+          if [[ $(drush status --field=Database) != "Connected" ]] && [[ "$LAGOON_GIT_BRANCH" != "main" ]]; then
+              # no drupal installed, sync DB from main branch
+              echo "drush -y sql-sync @lagoon.${LAGOON_PROJECT}-main @self"
+              drush -y sql-sync @lagoon.${LAGOON_PROJECT}-main @self
+
+              echo "drush -y rsync @lagoon.${LAGOON_PROJECT}-main:%files @self:%files"
+              drush -y rsync @lagoon.${LAGOON_PROJECT}-main:%files @self:%files
+
+              echo "drush -y cr"
+              drush -y cr
+          else
+            echo "Drush status: "
+            drush status --field=Database
+
+            echo "LAGOON_GIT_BRANCH: "
+            echo $LAGOON_GIT_BRANCH
+          fi
+        service: cli
+        shell: bash
+     - run:
         name: drush updb
         # This will only run if the database exists.
         command: |
           if [[ $(drush status --field=Database) == "Connected" ]]; then drush -y updb; fi
         service: cli
         shell: bash
-    # - run:
-    #     name: drush cim
-    #     # Enable once config sync has been setup.
-    #     command: drush -y cim
-    #     service: cli
-    #     shell: bash
-    - run:
-        name: drush cr
-        # This will only run if the database exists.
-        command: |
-          if [[ $(drush status --field=Database) == "Connected" ]]; then drush -y cr; fi
-        service: cli
-        shell: bash
+     - run:
+         name: drush cr
+         # This will only run if the database exists.
+         command: |
+           if [[ $(drush status --field=Database) == "Connected" ]]; then drush -y cr; fi
+         service: cli
+         shell: bash
 
 environments:
   main:
